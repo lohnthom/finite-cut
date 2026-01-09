@@ -62,15 +62,21 @@ with col1:
 
 with col2:
     st.subheader("Cyclic Inspiration")
+    # This reaches out to your specific Pinterest feed
     pin_feed = feedparser.parse("https://www.pinterest.com/laurenthomas8261/feed.rss")
     
     if pin_feed.entries:
-        # Pinterest hides images in the 'description' HTML. This pulls the URL out.
+        # Pinterest buries the image in the 'description' field
+        # We use a 'regex' to find the URL ending in .jpg or .png
+        import re
         desc = pin_feed.entries[0].description
-        img_url = re.findall(r'src="([^"]+)"', desc)
-        if img_url:
-            st.image(img_url[0], use_container_width=True, caption="From your Pinterest")
+        img_urls = re.findall(r'src="([^"]+)"', desc)
+        
+        if img_urls:
+            # We take the first image URL found in the description
+            st.image(img_urls[0], use_container_width=True, caption="Latest from Pinterest")
         else:
-            st.image(f"https://picsum.photos/seed/{datetime.now().day}/400/600", caption="Daily Reflection")
+            st.warning("Found the feed, but couldn't 'dig out' the image.")
     else:
+        # Fallback if Pinterest is being slow or the feed is empty
         st.image(f"https://picsum.photos/seed/{datetime.now().day}/400/600", caption="Daily Reflection")
