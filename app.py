@@ -6,17 +6,13 @@ import re
 # --- 1. PAGE CONFIG ---
 st.set_page_config(page_title="Finite Cut", layout="wide")
 
-# --- 2. STYLE (FIXED TYPO HERE) ---
+# --- STYLING (The Finite Look) ---
 st.markdown("""
     <style>
-    @media print {
-        header, [data-testid="stSidebar"], .stButton, .stCheckbox { display: none !important; }
-        .main .block-container { max-width: 100% !important; padding: 0 !important; }
-    }
-    .main-title { font-family: 'Courier New', monospace; font-weight: bold; font-size: 3rem; margin-bottom: 0px; }
-    .sub-quote { font-family: 'Georgia', serif; font-style: italic; color: #555; font-size: 1.1rem; margin-top: -10px; margin-bottom: 30px; }
+    .daily-card { border-left: 3px solid black; padding-left: 15px; margin-bottom: 20px; }
+    .seasonal-box { background-color: #f9f9f9; padding: 10px; border: 1px solid #eee; }
     </style>
-    """, unsafe_allow_html=True) # Fixed to unsafe_allow_html
+    """, unsafe_allow_html=True)
 
 # --- 3. THE HEADER ---
 st.markdown('<div class="main-title">FINITE CUT</div>', unsafe_allow_html=True)
