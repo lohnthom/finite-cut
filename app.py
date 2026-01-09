@@ -18,7 +18,7 @@ st.markdown("""
     .seasonal-box { background-color: #f9f9f9; padding: 10px; border: 1px solid #eee; }
     @media print { .no-print { display: none; } }
     </style>
-    """, unsafe_content_html=True)
+    """, unsafe_allow_html=True)
 
 # --- LAYOUT ---
 st.title("FINITE CUT")
