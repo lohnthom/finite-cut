@@ -3,80 +3,42 @@ import feedparser
 from datetime import datetime
 import re
 
-# --- 1. PAGE CONFIG ---
+# 1. PAGE SETUP
 st.set_page_config(page_title="Finite Cut", layout="wide")
 
-# --- STYLING (The Finite Look) ---
+# 2. STYLING (CRITICAL: 'unsafe_allow_html' is the only correct term)
 st.markdown("""
-<style>
-    @media print {
-        header, [data-testid="stSidebar"], .stButton, .stCheckbox { display: none !important; }
-        .main .block-container { max-width: 100% !important; padding: 0 !important; }
-    }
-    .main-title { font-family: 'Courier New', monospace; font-weight: bold; font-size: 3rem; margin-bottom: 0px; }
-    .sub-quote { font-family: 'Georgia', serif; font-style: italic; color: #555; font-size: 1.1rem; margin-top: -10px; margin-bottom: 30px; }
+    <style>
+    .main-title { font-family: 'Courier New', monospace; font-weight: bold; font-size: 3rem; }
+    .daily-card { border-left: 3px solid black; padding-left: 15px; margin-bottom: 20px; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. THE HEADER ---
+# 3. HEADER
 st.markdown('<div class="main-title">FINITE CUT</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-quote">"It is better to be a victim of your own passions than of the whims of others."</div>', unsafe_allow_html=True)
-st.caption(f"PDX • BEAVERTON • CANADA | {datetime.now().strftime('%A, %b %d, %Y')}")
+st.caption(f"DAILY BRIEFING | {datetime.now().strftime('%A, %b %d, %Y')}")
 
-# --- 4. DATA SOURCES ---
-FEEDS = {
-    "PDX Permits & News": "https://www.portland.gov/bds/news/rss",
-    "Atlantic Canada (CBC)": "https://www.cbc.ca/cctoc/rss/news/canada/atlantic",
-    "Blender Studio": "https://studio.blender.org/blog/rss",
-}
-
-# --- 5. SIDEBAR: SEASONAL ---
-with st.sidebar:
-    st.header("04 / SEASONAL")
-    st.markdown("---")
-    st.subheader("January Pulse")
-    st.write("**Grocery:** Persimmons, Root Veg, Dungeness Crab.")
-    st.write("**Flora:** Douglas Fir (Dormant), Witch Hazel (Blooming).")
-    st.write("**Fauna:** Great Horned Owls nesting.")
-
-# --- 6. THE DAILY BRIEFING ---
-st.header("01 / DAILY")
-
-def render_feed(name, url, limit=3):
-    feed = feedparser.parse(url)
-    for entry in feed.entries[:limit]:
-        st.markdown(f"**{entry.title}**")
-        st.caption(f"Source: {name}")
-        with st.expander("Read Overview"):
-            # Clean up HTML tags from summaries
-            summary = re.sub('<[^<]+?>', '', entry.summary)
-            st.write(summary[:300] + "...")
-        st.markdown("---")
-
+# 4. COLUMNS
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    st.subheader("Brief Cut")
-    for name, url in FEEDS.items():
-        render_feed(name, url)
+    st.subheader("01 / NEWS")
+    feed = feedparser.parse("https://www.portland.gov/bds/news/rss")
+    for entry in feed.entries[:3]:
+        st.markdown(f"**{entry.title}**")
+        st.write(re.sub('<[^<]+?>', '', entry.summary)[:200] + "...")
+        st.markdown("---")
 
 with col2:
-    st.subheader("Cyclic Inspiration")
-    # This reaches out to your specific Pinterest feed
+    st.subheader("02 / INSPIRATION")
     pin_feed = feedparser.parse("https://www.pinterest.com/laurenthomas8261/feed.rss")
-    
     if pin_feed.entries:
-        # Pinterest buries the image in the 'description' field
-        # We use a 'regex' to find the URL ending in .jpg or .png
-        import re
+        # Extract image from the description HTML
         desc = pin_feed.entries[0].description
-        img_urls = re.findall(r'src="([^"]+)"', desc)
-        
-        if img_urls:
-            # We take the first image URL found in the description
-            st.image(img_urls[0], use_container_width=True, caption="Latest from Pinterest")
+        img_url = re.findall(r'src="([^"]+)"', desc)
+        if img_url:
+            st.image(img_url[0], use_container_width=True)
         else:
-            st.warning("Found the feed, but couldn't 'dig out' the image.")
+            st.info("Feed found, but no image link detected.")
     else:
-        # Fallback if Pinterest is being slow or the feed is empty
-        st.image(f"https://picsum.photos/seed/{datetime.now().day}/400/600", caption="Daily Reflection")
+        st.write("No pins found.")
