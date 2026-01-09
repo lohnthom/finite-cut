@@ -56,7 +56,7 @@ def render_feed(name, url, limit=3):
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    st.subheader("Sentinel News")
+    st.subheader("Brief Cut")
     for name, url in FEEDS.items():
         render_feed(name, url)
 
