@@ -33,7 +33,61 @@ with st.sidebar:
     st.write("**Fauna:** Great Horned Owls nesting.")
 
 # --- 4. THE DAILY BRIEFING ---
+import streamlit as st
+import feedparser
+from datetime import datetime
+
+# --- DATA SOURCES ---
+FEEDS = {
+    "PDX Permits & News": "https://www.portland.gov/bds/news/rss",
+    "Atlantic Canada (CBC)": "https://www.cbc.ca/cctoc/rss/news/canada/atlantic",
+    "Blender Studio": "https://studio.blender.org/blog/rss",
+    "Pitchfork (Weekly Music)": "https://pitchfork.com/feed/feed-reviews/rss",
+    "Pinterest (Lauren Thomas)": "https://www.pinterest.com/laurenthomas8261/feed.rss"
+}
+
+# --- 01 / DAILY: THE SENTINEL ---
 st.header("01 / DAILY")
+
+# Logic to handle the "Weight" of info
+def render_feed(name, url, limit=3):
+    feed = feedparser.parse(url)
+    if not feed.entries:
+        st.write(f"No new updates for {name}")
+        return
+        
+    for entry in feed.entries[:limit]:
+        with st.container():
+            st.markdown(f"**{entry.title}**")
+            # Medium weight: Show a snippet
+            if name in ["PDX Permits & News", "Atlantic Canada (CBC)"]:
+                st.caption(entry.get('published', 'Recent'))
+                with st.expander("Read Overview"):
+                    st.write(entry.summary[:300] + "...")
+            # Surface weight: Just the link/title
+            else:
+                st.caption(f"Source: {name}")
+        st.markdown("---")
+
+col1, col2 = st.columns([2, 1])
+
+with col1:
+    render_feed("PDX Permits & News", FEEDS["PDX Permits & News"])
+    render_feed("Atlantic Canada (CBC)", FEEDS["Atlantic Canada (CBC)"])
+    render_feed("Blender Studio", FEEDS["Blender Studio"])
+
+with col2:
+    st.subheader("Cyclic Inspiration")
+    # This generates a different high-end architectural/nature image every day
+    day_of_year = datetime.now().timetuple().tm_yday
+    st.image(f"https://picsum.photos/seed/{day_of_year}/400/600", caption="Daily Pinterest Reflection")
+
+# --- 02 / WEEKLY: DEEP DIVES ---
+# This section only populates on a specific day or if you toggle it
+st.header("02 / WEEKLY")
+with st.expander("Reveal Weekly Music & Restos"):
+    render_feed("Pitchfork (Weekly Music)", FEEDS["Pitchfork (Weekly Music)"], limit=5)
+    st.markdown("**New Resto Lead:** [AI to scrape PDX Eater here]")
 
 # The RSS logic
 feeds = {
