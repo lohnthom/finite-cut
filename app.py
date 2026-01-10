@@ -370,7 +370,7 @@ const SectionCard = ({ section }) => {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      View original source →
+                      View original source &rarr;
                     </a>
                   </div>
                 )}
