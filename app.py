@@ -23,15 +23,6 @@ st.set_page_config(
     layout="wide"
 )
 
-# Simpler CSS - just for colored boxes
-st.markdown("""
-<style>
-    .stMarkdown h1 {
-        font-size: 2.5rem !important;
-    }
-</style>
-""", unsafe_allow_html=True)
-
 # Section configuration
 SECTION_CONFIG = [
     {"id": "world_news", "title": "World News", "frequency": "Daily", "time": 7},
@@ -120,7 +111,7 @@ for section_config in SECTION_CONFIG:
     
     # AI Overview in a nice container
     with st.container(border=True):
-        st.markdown(f"✨ {section_data.get('ai_overview', 'No overview available')}")
+        st.write(f"✨ {section_data.get('ai_overview', 'No overview available')}")
     
     # Toggle for sources
     items = section_data.get('items', [])
